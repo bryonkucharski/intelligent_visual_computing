@@ -4,6 +4,10 @@ import _pickle as p
 import numpy as np
 from computeShapeHistogram import computeShapeHistogram
 from utils import save_data, load_data
+import matplotlib.pyplot as plt
+
+def sigmoid(x):
+  return 1 / (1 + np.exp(-x))
 
 def logisticRegressionTrain(train_dir, number_of_bins, loadData=False):
     """
@@ -79,12 +83,43 @@ def logisticRegressionTrain(train_dir, number_of_bins, loadData=False):
     for n in range(N):
         X[n,:] = computeShapeHistogram( meshes[n], min_y, max_y, number_of_bins )
     
-    w = .1 * np.random.randn( 1, number_of_bins+1 ) # +1 for bias, random initialization
-    
+    w = .1 * np.random.randn( 1, number_of_bins ) # +1 for bias, random initialization
+    b = 0
     """""""""""""""""""""""""""""""""""""""
      ADD CODE HERE TO LEARN PARAMETERS w
     """""""""""""""""""""""""""""""""""""""
- 
-    return w, min_y, max_y
+    losses = []
+    for itr in range(10000):
+
+        #forward pass
+        Z = np.add(np.dot(w, X.T), b)
+        Y_hat = sigmoid(Z)
+        Y_true = np.array(shape_labels)
+        loss = np.multiply(Y_true,np.log(Y_hat)) + (1-Y_true)*np.log(1-Y_hat)
+        penalty = (1/N)*(0.1 * np.sum(np.abs(w)))
+        sum = np.sum(loss )
+        cost = -(sum / N) + penalty
+        losses.append(cost)
+
+        #backward pass
+        dZ = Y_hat - Y_true
+        db = (1 / N) * np.sum(dZ)
+        dW = (1 / N) * (np.dot(dZ, X) + np.sign(w)*0.1)
+
+
+        assert w.shape == (1,number_of_bins)
+        assert dW.shape == (1, number_of_bins)
+
+        w = w - 0.1*dW
+        b = b - 0.1*db
+
+        print('loss: ' + str(cost))
+    #print(w)
+    #plt.plot(losses)
+    #plt.title("Loss without L1-norm")
+    #plt.xlabel('Iterations')
+    #plt.ylabel('Loss')
+    #plt.show()
+    return w,b, min_y, max_y
 
 

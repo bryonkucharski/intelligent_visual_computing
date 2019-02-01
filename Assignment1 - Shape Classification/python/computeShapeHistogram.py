@@ -1,5 +1,7 @@
 from __future__ import division
 import numpy as np
+import matplotlib.pyplot as plt
+
 
 
 def computeShapeHistogram(mesh, y_min, y_max, number_of_bins):
@@ -22,12 +24,17 @@ def computeShapeHistogram(mesh, y_min, y_max, number_of_bins):
     """
 
     histogram = np.zeros((1, number_of_bins))
+    #get just the y coordinate
+    y_cord = mesh.V[:,1]
 
-    """""""""""""""""""""""""""""""""
-    ADD CODE HERE TO COMPUTE mesh.H
-    """""""""""""""""""""""""""""""""
+    #create a normalized histogram distribution of the y coordinate in the given mesh
+    hist, bins = np.histogram(y_cord,bins=number_of_bins, range = (y_min, y_max), density = True)
+
+    #get in proper form
+    histogram[:,] = hist
 
     return histogram
+
 
     
 

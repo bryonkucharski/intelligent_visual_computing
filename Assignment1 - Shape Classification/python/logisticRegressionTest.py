@@ -5,7 +5,9 @@ import numpy as np
 from computeShapeHistogram import computeShapeHistogram
 from utils import save_data, load_data
 
-def logisticRegressionTest(test_dir, w, min_y, max_y, loadData=False):
+def sigmoid(x):
+  return 1 / (1 + np.exp(-x))
+def logisticRegressionTest(test_dir, w,b, min_y, max_y, loadData=False):
     """
     complete this function to test a logistic regression
     classifier on a specified dataset
@@ -29,7 +31,7 @@ def logisticRegressionTest(test_dir, w, min_y, max_y, loadData=False):
     change loadData to True in argument. The code automatically saves the data it loads in the first iteration
     """
 
-    number_of_bins = w.shape[1]-1
+    number_of_bins = w.shape[1]
 
     if loadData:
         meshes, N, shape_labels = load_data("tmp_test.p")
@@ -86,9 +88,23 @@ def logisticRegressionTest(test_dir, w, min_y, max_y, loadData=False):
     ADD CODE HERE TO TEST CLASSIFIER
     """""""""""""""""""""""""""""""""""""""
 
-    t = .5  # your predictions (change this!), report t values in your report!!!
-    test_err = 1  # recompute this based on your predictions, report it in your report!!!
+    Z = np.add(np.dot(w, X.T),b)
+    t = sigmoid(Z)
+    results = (t > 0.5).astype(int)
+    #print(w.shape,X.shape,Z.shape,t.shape)
+    #print(t,results,shape_labels)
+    #t = .5  # your predictions (change this!), report t values in your report!!!
+    test_err = (results == np.array(shape_labels)) # recompute this based on your predictions, report it in your report!!!
+    correct = 0
+    total = N
+    for pred, label in zip(results.squeeze().tolist(), shape_labels):
+        if pred == label:
+            correct += 1
 
+    test_err = correct/total
+
+   #test_err = sum(1 for x, y in zip(results.squeeze(), np.array(shape_labels)) if x == y) / len(results)
+    #print(results.shape)
     print('Test classification error : %.2f%%'%(test_err * 100))
 
     return t, test_err

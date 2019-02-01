@@ -6,7 +6,8 @@ train_dir = '../dataset/train'
 test_dir = '../dataset/test'
 
 # Train
-w, min_y, max_y = logisticRegressionTrain(train_dir, 10, False)
+w, b,min_y, max_y = logisticRegressionTrain(train_dir, 10, False)
 
 # Test
-t, test_err  = logisticRegressionTest(test_dir, w, min_y, max_y, False)
+t, test_err  = logisticRegressionTest(test_dir, w,b, min_y, max_y, False)
+#print(w, t, test_err)
